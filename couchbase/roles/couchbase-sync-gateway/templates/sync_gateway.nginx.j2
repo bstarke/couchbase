@@ -1,0 +1,30 @@
+upstream sync_gateway {
+    server 127.0.0.1:{{ couchbase_sync_gateway_port }};
+}
+
+# HTTP server
+server {
+    listen {{ couchbase_sync_gateway_nginx_port }};
+    server_name {{ couchbase_sync_gateway_nginx_server }};
+    client_max_body_size 21m;
+
+    ssl on;
+    ssl_certificate /var/lib/certs/certificate/couchbase-gateway.prod.ims-couchbase.ssaeim.prod.us.walmart.net.pem;
+    ssl_certificate_key /var/lib/certs/certificate/couchbase-gateway.prod.ims-couchbase.ssaeim.prod.us.walmart.net.key;
+
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1.2;
+
+    location / {
+        proxy_pass              http://sync_gateway;
+        proxy_pass_header       Accept;
+        proxy_pass_header       Server;
+        proxy_http_version      1.1;
+        proxy_set_header        Upgrade $http_upgrade;
+        proxy_set_header        Connection "upgrade";
+        keepalive_requests      1000;
+        keepalive_timeout       360s;
+        proxy_read_timeout      360s;
+    }
+}

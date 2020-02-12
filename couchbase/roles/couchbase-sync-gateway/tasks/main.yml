@@ -1,0 +1,94 @@
+---
+
+- name: Download
+  get_url: url={{ couchbase_sync_gateway_url }} dest=/tmp/{{ couchbase_sync_gateway_package }} sha256sum={{ couchbase_sync_gateway_sha256 }} timeout=30
+  when: not couchbase_sync_gateway_local_package
+  tags:
+    - installation
+
+- name: Copy
+  copy: src={{ couchbase_sync_gateway_package}} dest=/tmp/{{ couchbase_sync_gateway_package }}
+  when: couchbase_sync_gateway_local_package
+  tags:
+    - installation
+
+# Install on CentOS/RHEL
+- include: RedHat.yml
+  when: ansible_os_family == "RedHat"
+
+# Install on Debian/Ubuntu
+- include: Debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Cleanup
+  file: name=/tmp/{{ couchbase_sync_gateway_package }} state=absent
+  tags:
+    - installation
+
+- name: Ensure nginx sites-available path exists.
+  file:
+    path: "/etc/nginx/sites-available/"
+    state: directory
+
+- name: Ensure nginx sites-enabled path exists.
+  file:
+    path: "/etc/nginx/sites-enabled/"
+    state: directory
+
+- name: Copy Nginx Main Settings
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Nginx
+  tags:
+    - installation
+    - configuration
+
+- name: Copy Nginx Site Settings
+  template:
+    src: sync_gateway.nginx.j2
+    dest: /etc/nginx/sites-available/sync_gateway
+  notify: Restart Nginx
+  tags:
+    - installation
+    - configuration
+
+- name: Apply Nginx Settings
+  file:
+    src: /etc/nginx/sites-available/sync_gateway
+    dest: /etc/nginx/sites-enabled/sync_gateway
+    state: link
+  notify: Restart Nginx
+  tags:
+    - installation
+    - configuration
+
+- name: Copy Sync Gateway Settings
+  template:
+    src: couchbase-sync-gateway-import.json.j2
+    dest: "/home/sync_gateway/sync_gateway.json"
+    owner: "sync_gateway"
+    mode: "u=rw,g=,o="
+  notify: Restart Gateway
+  tags:
+    - installation
+    - configuration
+
+- name: Ensure Sync Gateway Service is started
+  service:
+    name: sync_gateway
+    state: started
+    enabled: yes
+  tags:
+    - installation
+
+- name: Ensure Nginx Service is started
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  tags:
+    - installation

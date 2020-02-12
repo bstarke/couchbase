@@ -1,0 +1,40 @@
+{
+	"interface": "localhost:{{ couchbase_sync_gateway_port }}",
+	"adminInterface": "localhost:{{ couchbase_sync_gateway_admin_port }}",
+    "logging": {
+        "log_file_path": "/home/sync_gateway/logs",
+        "console": {
+            "log_level": "none"
+        }
+    },
+    "couchbaseKeepaliveInterval": 30,
+	"databases": {
+		{% for db_name in couchbase_sync_gateway_db_names -%}
+		"{{ db_name }}": {
+			"server": "{{ couchbase_server_url }}:{{ couchbase_server_admin_port }}",
+			"username": "{{ couchbase_server_user }}",
+            "password": "{{ couchbase_server_pass }}",
+			"enable_shared_bucket_access": true,
+			"import_docs": {{ import }},
+			"num_index_replicas": 0,
+			{% if couchbase_sync_gateway_users -%}
+			"users": {
+				{% for user in couchbase_sync_gateway_users -%}
+				"{{ user.name }}": {
+                    {%- if user.password is defined %}
+                    "password": "{{ user.password }}",
+                    {%  endif %}
+					"disabled": false
+					{%- if user.admin_channels is defined %},
+					"admin_channels": [{% for channel in user.admin_channels -%}"{{ channel }}"{% if not loop.last %},{% endif %}{% endfor -%}
+					]{% endif %}
+
+				}{% if not loop.last %},{% endif %}
+				{% endfor -%}
+			},{% endif %}
+			"sync": `
+            {% include "gateway-sync-function.js" %}
+			`
+		}{% if not loop.last %},{% endif %}{% endfor -%}
+	}
+}

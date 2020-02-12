@@ -1,0 +1,22 @@
+---
+couchbase_sync_gateway_version: 2.6.0
+couchbase_sync_gateway_package: couchbase-sync-gateway-community_2.6.0_x86_64.rpm
+#couchbase_sync_gateway_url: https://packages.couchbase.com/releases/couchbase-sync-gateway/2.7.0/couchbase-sync-gateway
+couchbase_sync_gateway_sha256: "9be8902f303b52409a602cdc3c6a95e833324bcdf29a75dd734a234e8d23dd7e"
+couchbase_sync_gateway_port: 4984
+couchbase_sync_gateway_admin_port: 4985
+couchbase_sync_gateway_db_names:
+  - default
+couchbase_sync_gateway_users:
+  - name: GUEST
+    admin_channels:
+      - public
+# NGINX
+couchbase_sync_gateway_nginx_server: localhost
+couchbase_sync_gateway_nginx_port: 80
+
+# Server
+couchbase_server_url: http://localhost
+couchbase_server_admin_port: 8091
+couchbase_server_user: sync_gateway
+couchbase_server_pass: sync_gateway

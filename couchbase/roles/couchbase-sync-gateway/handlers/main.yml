@@ -1,0 +1,8 @@
+---
+# TODO: add wait for port available to each
+
+- name: Restart Gateway
+  service: name=sync_gateway state=restarted
+
+- name: Restart Nginx
+  service: name=nginx state=restarted
