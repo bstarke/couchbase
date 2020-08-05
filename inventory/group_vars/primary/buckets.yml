@@ -1,0 +1,11 @@
+buckets:
+  "one-sample":
+    type: "couchbase"
+    ram: 256
+    replicas: 1
+    eviction: "valueOnly"
+  "two-sample":
+    type: "couchbase"
+    ram: 256
+    replicas: 1
+    eviction: "fullEviction"

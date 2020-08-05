@@ -2,36 +2,29 @@
 # File: retreive_ssl_cert.yml
 # Ansible playbook to grab SSL certificates from all cluster nodes
 # This playbook only works with Enterprise Edition
-
-- hosts: cluster_nodes
-  tasks:
-  - name: Create cluster grouping
-    group_by: key={{ couchbase_server_node_role }}
-
 - hosts: primary
   gather_facts: False
-  become: yes
-  become_user: root
-  vars:
-    couchbase_server_primary_node: "{{hostvars[groups['primary'][0]]['inventory_hostname']}}"
-  vars_files:
-    - ../defaults/main.yml
-    - ../../../group_vars/cluster_nodes/vars
+  become: true
 
   tasks:
   - name: Remove previous local data
-    become: no
+    become: false
     local_action: file name=var/ssl_certs/*.pem state=absent
 
   - name: Ensure local data dir exists
-    become: no
+    become: false
     local_action: file name=var/ssl_certs state=directory
 
   - name: Store SSL certificate
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli ssl-manage --cluster-cert-info -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} > /tmp/{{ couchbase_server_primary_node }}.pem"
 
   - name: Fetch SSL certificate
-    fetch: "src=/tmp/{{ couchbase_server_primary_node }}.pem dest=../../../{{ ansible_hostname }}.pem flat=yes"
+    fetch:
+      src:  /tmp/{{ couchbase_server_primary_node }}.pem
+      dest: ../{{ ansible_hostname }}.pem
+      flat: true
 
   - name: Cleanup
-    file: "path=/tmp/{{ couchbase_server_primary_node }}.pem state=absent"
+    file:
+      path: /tmp/{{ couchbase_server_primary_node }}.pem
+      state: absent

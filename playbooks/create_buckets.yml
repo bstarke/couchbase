@@ -1,0 +1,16 @@
+---
+# File: create_buckets.yml
+# Example Ansible playbook to create a new Couchbase Server bucket
+- hosts: primary
+  become: false
+
+  tasks:
+    - name: Verify node health
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} | awk '/{{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }}/ {print $3}'"
+      register: couchbase_server_health
+      failed_when: couchbase_server_health['stdout'] != "healthy"
+
+    - name: Create new bucket
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli bucket-create -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --bucket {{ item }} --bucket-type {{ item.type }} --bucket-ramsize {{ item.ram }} --bucket-replica {{ item.replicas }} --bucket-eviction-policy {{ item.eviction }}"
+      loop: "{{  buckets  }}"
+      when: couchbase_server_health['stdout'] == "healthy"

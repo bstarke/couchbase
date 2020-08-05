@@ -6,10 +6,11 @@
 # actually initialize a cluster, see cluster_init.yml for that
 
 - hosts: cluster_nodes
-  become: yes
-  become_user: root
+  become: true
   roles:
-    - couchbaselabs.couchbase-server
+    - bstarke.couchbase-server
   tasks:
   - name: Couchbase Server Service
-    service: name=couchbase-server state=started
+    service:
+      name: couchbase-server
+      state: started
