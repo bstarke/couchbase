@@ -2,25 +2,29 @@
 # File: tasks/main.yml - Main tasks for ansible-couchbase-server
 
 - name: Distribution specific variables
-  include_vars: "../defaults/{{ ansible_distribution }}.yml"
+  include_vars: "../vars/{{ ansible_distribution }}.yml"
 
 - name: Tuning variables
-  include_vars: ../defaults/tuning.yml
+  include_vars: ../vars/tuning.yml
 
 # CentOS tasks
-- include: CentOS.yml
+- name: CentOS
+  import_tasks: CentOS.yml
   when: ansible_distribution  == "CentOS"
 
 # Debian tasks
-- include: Debian.yml
+- name: Debian
+  import_tasks: Debian.yml
   when: ansible_distribution  == "Debian"
 
 # Red Hat tasks
-- include: RedHat.yml
+- name: RedHat
+- import_tasks: RedHat.yml
   when: ansible_distribution  == "RedHat"
 
 # Ubuntu tasks
-- include: Ubuntu.yml
+- name: Ubuntu
+  import_tasks: Ubuntu.yml
   when: ansible_distribution  == "Ubuntu"
 
 - name: Update user limits

@@ -8,7 +8,7 @@
 - hosts: cluster_nodes
   become: true
   roles:
-    - bstarke.couchbase-server
+    - ../roles/couchbase-server
   tasks:
   - name: Couchbase Server Service
     service:
