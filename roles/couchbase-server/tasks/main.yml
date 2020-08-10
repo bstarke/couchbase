@@ -19,7 +19,7 @@
 
 # Red Hat tasks
 - name: RedHat
-- import_tasks: RedHat.yml
+  import_tasks: RedHat.yml
   when: ansible_distribution  == "RedHat"
 
 # Ubuntu tasks
@@ -29,11 +29,18 @@
 
 - name: Update user limits
   become: true
-  copy: src=etc_security_limits.d_couchbase-server.conf dest=/etc/security/limits.d/couchbase-server.conf owner=root group=root mode=0644
+  copy:
+    src: "etc_security_limits.d_couchbase-server.conf"
+    dest: "/etc/security/limits.d/couchbase-server.conf"
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Install profile.d script
   become: true
-  template: src=profile_couchbase-server.sh.j2 dest=/etc/profile.d/couchbase-server.sh
+  template:
+    src: "profile_couchbase-server.sh.j2"
+    dest: "/etc/profile.d/couchbase-server.sh"
 
 - name: Optimized settings for Couchbase Server data and index volumes
   become: true
@@ -51,6 +58,15 @@
 
 - name: Disable THP
   become: true
-  copy: src=rc.local dest=/etc/rc.local owner=root group=root mode=0644
-  when: ansible_distribution_version != "12.04"
+  copy:
+    src: rc.local
+    dest: "/etc/rc.local"
+    owner: root
+    group: root
+    mode: 0644
   notify: Source local settings
+
+- name: Couchbase Server Service
+  service:
+    name: couchbase-server
+    state: started

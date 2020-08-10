@@ -2,7 +2,7 @@
 # File: site.yml - Example Couchbase Server site playbook
 
 - name: Couchbase Server
-  import_playbook: cluster_install.yml
+  import_playbook: cluster_init.yml
 
 - name: Create Buckets
   import_playbook: create_buckets.yml

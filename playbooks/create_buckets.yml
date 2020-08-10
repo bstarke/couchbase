@@ -3,7 +3,8 @@
 # Example Ansible playbook to create a new Couchbase Server bucket
 - hosts: primary
   become: false
-
+  vars_files:
+    - ../roles/couchbase-server/vars/main.yml
   tasks:
     - name: Verify node health
       shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} | awk '/{{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }}/ {print $3}'"
