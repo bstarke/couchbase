@@ -1,67 +1,49 @@
 ---
 # File: tasks/Ubuntu.yml - Ubuntu tasks for ansible-couchbase-server
+## Couchbase Server
 
-## Couchbase Server Enterprise Edition
-
-- name: Download package locally (Ubuntu)
-  become: false
-#  connection: local
-  get_url:
-    url: "{{ couchbase_server_ubuntu_ee_url }}"
-    dest: "/tmp/{{ couchbase_server_ubuntu_ee_package }}"
-#    checksum: sha256:{{ couchbase_server_ubuntu_ee_sha256 }}
-    timeout: 240
-#  run_once: true
-  when: couchbase_server_edition == "enterprise" and couchbase_server_local_package != true
-  tags: installation
-
-#- name: Copy package (Ubuntu)
-#  copy: "src={{ couchbase_server_ubuntu_ee_package }} dest=/tmp/{{ couchbase_server_ubuntu_ee_package }}"
-#  when: couchbase_server_edition == "enterprise" and couchbase_server_local_package != true
-#  tags: installation
-
-- name: Install package (Ubuntu)
+- name: Download and install meta package from Couchbase (Ubuntu)
   become: true
-  apt: "deb=/tmp/{{ couchbase_server_ubuntu_ee_package }} state=present"
-  when: couchbase_server_edition == "enterprise"
+  apt:
+    deb: "{{ couchbase_server_ubuntu_package }}"
+    state: present
   tags: installation
 
-#- name: Package file cleanup (Ubuntu)
-#  become: true
-#  file:
-#    dest: "/tmp/{{ couchbase_server_ubuntu_ee_package }}"
-#    state: absent
-#  when: couchbase_server_edition == "enterprise"
-#  tags: installation
-
-## Couchbase Server Community Edition
-
-- name: Download package locally (Ubuntu)
-  become: false
-  connection: local
-  get_url: "url={{ couchbase_server_ubuntu_ce_url }} dest={{ role_path }}/files/{{ couchbase_server_ubuntu_ce_package }} sha256sum={{ couchbase_server_ubuntu_ce_sha256 }} timeout=240"
-  run_once: true
-  when: couchbase_server_edition == "community" and couchbase_server_local_package != true
+- name: Install enterprise package latest (Ubuntu)
+  become: true
+  apt:
+    name: couchbase-server
+    state: present
+    update_cache: yes
+  when: couchbase_server_edition == "enterprise" and couchbase_server_ubuntu_version == "latest"
   tags: installation
 
-- name: Copy package (Ubuntu)
-  copy: "src={{ couchbase_server_ubuntu_ce_package }} dest=/tmp/{{ couchbase_server_ubuntu_ce_package }}"
-  when: couchbase_server_edition == "community" and couchbase_server_local_package != true
+- name: Install enterprise package version (Ubuntu)
+  become: true
+  apt:
+    name: couchbase-server={{ couchbase_server_ubuntu_version }}
+    state: present
+    update_cache: yes
+  when: couchbase_server_edition == "enterprise" and couchbase_server_ubuntu_version != "latest"
   tags: installation
 
-- name: Install package (Ubuntu)
-  become: yes
-  become_user: root
-  apt: "deb=/tmp/{{ couchbase_server_ubuntu_ce_package }} state=present"
-  when: couchbase_server_edition == "community"
+- name: Install community package latest (Ubuntu)
+  become: true
+  apt:
+    name: couchbase-server-community
+    state: present
+    update_cache: yes
+  when: couchbase_server_edition == "community" and couchbase_server_ubuntu_version == "latest"
   tags: installation
 
-#- name: Package file cleanup (Ubuntu)
-#  become: yes
-#  become_user: root
-#  file: "dest=/tmp/{{ couchbase_server_ubuntu_ce_package }} state=absent"
-#  when: couchbase_server_edition == "community"
-#  tags: installation
+- name: Install community package version (Ubuntu)
+  become: true
+  apt:
+    name: couchbase-server-community={{ couchbase_server_ubuntu_version }}
+    state: present
+    update_cache: yes
+  when: couchbase_server_edition == "community" and couchbase_server_ubuntu_version != "latest"
+  tags: installation
 
 # Firewall (optional)
 - name: Firewall limitations (Ubuntu)

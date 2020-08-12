@@ -1,10 +1,10 @@
 buckets:
-- name: one-sample
+- name: "test-one"
   type: "couchbase"
   ram: 256
   replicas: 1
   eviction: "valueOnly"
-- name: two-sample
+- name: "test-two"
   type: "couchbase"
   ram: 256
   replicas: 1

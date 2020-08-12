@@ -7,26 +7,6 @@
 - name: Tuning variables
   include_vars: ../vars/tuning.yml
 
-# CentOS tasks
-- name: CentOS
-  import_tasks: CentOS.yml
-  when: ansible_distribution  == "CentOS"
-
-# Debian tasks
-- name: Debian
-  import_tasks: Debian.yml
-  when: ansible_distribution  == "Debian"
-
-# Red Hat tasks
-- name: RedHat
-  import_tasks: RedHat.yml
-  when: ansible_distribution  == "RedHat"
-
-# Ubuntu tasks
-- name: Ubuntu
-  import_tasks: Ubuntu.yml
-  when: ansible_distribution  == "Ubuntu"
-
 - name: Update user limits
   become: true
   copy:
@@ -77,6 +57,26 @@
     group: root
     mode: 0644
   notify: Source local settings
+
+# Ubuntu tasks
+- name: Ubuntu
+  import_tasks: Ubuntu.yml
+  when: ansible_distribution  == "Ubuntu"
+
+# CentOS tasks
+- name: CentOS
+  import_tasks: CentOS.yml
+  when: ansible_distribution  == "CentOS"
+
+# Debian tasks
+- name: Debian
+  import_tasks: Debian.yml
+  when: ansible_distribution  == "Debian"
+
+# Red Hat tasks
+- name: RedHat
+  import_tasks: RedHat.yml
+  when: ansible_distribution  == "RedHat"
 
 - name: Couchbase Server Service
   service:

@@ -3,7 +3,7 @@
 # Example Ansible playbook to initialize a new Couchbase Server cluster
 
 - hosts: cluster_nodes
-  become: True
+  become: true
   roles:
     - "../roles/couchbase-server"
   tasks:
@@ -34,7 +34,7 @@
 #############################################################################
 
 - hosts: primary
-  become: True
+  become: true
   vars_files:
     - ../roles/couchbase-server/vars/main.yml
 
@@ -42,20 +42,14 @@
   - name: Get major version
     shell: cat /opt/couchbase/VERSION.txt | cut -d '.' -f1-2
     register: cb_major_version
-    changed_when: False
+    changed_when: false
 
-  - name: Wait for Admin
-    wait_for: "port={{ couchbase_server_admin_port }} delay=2"
+  - set_fact:
+      couchbase_version: "{{ cb_major_version['stdout'] }}"
 
-  - name: Check if already initialized #couchbase-cli host-list -c localhost:8091 --username Administrator --password couchbase
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli host-list -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
-    register: cb_host_list
-    ignore_errors: True
-    changed_when: False
-
-  - name: Initialize primary node (6.5)
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli node-init -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --node-init-data-path {{ couchbase_server_data_path }} --node-init-index-path {{ couchbase_server_index_path }} --node-init-eventing-path {{ couchbase_server_data_path }} --node-init-analytics-path {{ couchbase_server_data_path }} --node-init-hostname {{ ansible_fqdn }} --ipv4"
-    when: cb_major_version['stdout'] == "6.5" and cb_host_list.rc != 0
+  - name: Display Version
+    debug:
+      msg: "Version: {{ couchbase_version }}"
 
   - name: Wait for Admin
     wait_for: "port={{ couchbase_server_admin_port }} delay=2"
@@ -65,21 +59,23 @@
   - set_fact:
       couchbase_server_ram: "{{ ((((ansible_memtotal_mb|int * 0.8) |round(0,'floor') - couchbase_server_index_ram|float) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.8) |round(0,'floor') - couchbase_server_index_ram|float) |int, 256) }}"
 
-  - name: Configure cluster settings (6.5.*)
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli cluster-init -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --cluster-username {{ couchbase_server_admin }} --cluster-password {{ couchbase_server_password }} --services={{ couchbase_server_node_services }} --cluster-ramsize {{ couchbase_server_ram }} --cluster-index-ramsize {{ couchbase_server_index_ram }}"
-    when: cb_major_version['stdout'] == "6.5" and cb_host_list.rc != 0
+  - name: Check if already initialized #couchbase-cli host-list -c localhost:8091 --username Administrator --password couchbase
+    shell: "{{ couchbase_server_bin_path }}/couchbase-cli host-list -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+    register: cb_host_list
+    ignore_errors: true
+    changed_when: false
 
-  - name: Configure cluster settings (6.0.*)
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli cluster-init -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --cluster-init-username={{ couchbase_server_admin }} --cluster-init-password={{ couchbase_server_password }} --cluster-init-port={{couchbase_server_admin_port}} --cluster-init-ramsize={{ couchbase_server_ram }} --services={{ couchbase_server_node_services }}"
-    when: cb_major_version['stdout'] == "6.0" and cb_host_list.rc != 0
+  - name: Configure cluster settings (6.*.*)
+    shell: "{{ couchbase_server_bin_path }}/couchbase-cli cluster-init -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --cluster-username {{ couchbase_server_admin }} --cluster-password {{ couchbase_server_password }} --services={{ couchbase_server_node_services }} --cluster-ramsize {{ couchbase_server_ram }} --cluster-index-ramsize {{ couchbase_server_index_ram }}"
+    when: couchbase_version|float >= 6.0 and cb_host_list.rc != 0
 
 #############################################################################
 ####              Initialize additional cluster nodes                    ####
 #############################################################################
 
 - hosts: additional
-  become: True
-  gather_facts: True
+  become: true
+  gather_facts: true
   vars_files:
     - ../roles/couchbase-server/vars/main.yml
 
@@ -90,24 +86,31 @@
   - name: Get major version
     shell: cat /opt/couchbase/VERSION.txt | cut -d '.' -f1-2
     register: cb_major_version
-    changed_when: False
+    changed_when: false
+
+  - set_fact:
+      couchbase_version: "{{ cb_major_version['stdout'] }}"
 
   - name: Check if already initialized #couchbase-cli host-list -c localhost:8091 --username Administrator --password couchbase
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli host-list -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
     register: cb_host_list
     ignore_errors: true
-    changed_when: False
+    changed_when: false
 
-  - name: Initialize additional node (version 6.5)
+  - name: Initialize additional node (version >= 6.5)
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli node-init -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --node-init-data-path {{ couchbase_server_data_path }} --node-init-index-path {{ couchbase_server_index_path }} --node-init-eventing-path {{ couchbase_server_data_path }} --node-init-analytics-path {{ couchbase_server_data_path }} --node-init-hostname {{ ansible_fqdn }} --ipv4"
-    when: cb_major_version['stdout'] == "6.5" and cb_host_list.rc != 0
+    when: couchbase_version|float >= 6.5 and cb_host_list.rc != 0
+
+  - name: Initialize additional node (version 6.0.*)
+    shell: "{{ couchbase_server_bin_path }}/couchbase-cli node-init -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --node-init-data-path {{ couchbase_server_data_path }} --node-init-index-path {{ couchbase_server_index_path }} --node-init-analytics-path {{ couchbase_server_data_path }}"
+    when: couchbase_version|float == 6.0 and cb_host_list.rc != 0
 
 #############################################################################
 ####           Join additional nodes to the cluster and rebalance        ####
 #############################################################################
 
 - hosts: primary
-  become: True
+  become: true
   vars_files:
     - "../roles/couchbase-server/vars/main.yml"
 
@@ -116,10 +119,13 @@
     shell: "cat /opt/couchbase/VERSION.txt | cut -d '.' -f1-2"
     register: "cb_major_version"
 
+  - set_fact:
+      couchbase_version: "{{ cb_major_version['stdout'] }}"
+
   - name: Join additional cluster nodes
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-add -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --server-add http://{{hostvars[[item][0]]['inventory_hostname']}}:{{ couchbase_server_admin_port }} --server-add-username {{ couchbase_server_admin }} --server-add-password {{ couchbase_server_password }} --services={{hostvars[[item][0]]['couchbase_server_node_services']}}"
     with_items: "{{ groups['additional'] }}"
-    when: cb_major_version['stdout'] == "6.5"
+    when: couchbase_version|float >= 6.0
 
   - name: Rebalance cluster
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli rebalance -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"

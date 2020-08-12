@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
     # Ansible Linux box in case you don't want to install Ansible locally
 #   config.vm.define "ansible" do |box|
 #     box.vm.network "private_network", ip: "192.168.33.5"
-#     box.vm.hostname = "cb1"
+#     box.vm.hostname = "ansible.vagrant.test"
 #     box.vm.synced_folder ".", "/vagrant", disabled: false
 #     box.vm.provision "shell", inline: <<-SHELL
 #         apt-get update
