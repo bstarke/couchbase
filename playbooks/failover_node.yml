@@ -8,7 +8,7 @@
 
   tasks:
   - name: Failover node
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli failover -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} -c {{ couchbase_server_primary_node }} --server-failover={{ couchbase_server_failover_node }}"
+    shell: "{{ couchbase_server_bin_path }}/couchbase-cli failover -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} -c {{ ansible_fqdn }} --server-failover={{ couchbase_server_failover_node }}"
     register: result
     ignore_errors: True
 

@@ -14,7 +14,7 @@
 # Current default installed version is:
 # Couchbase Server Enterprise Edition version 6.5.1
 #
-# Comment out the 4 variables below and uncoment variables for any older
+# Comment out the 4 variables below and uncomment variables for any older
 # version that you wish to install or pass them in as --extra-vars to the
 # ansible-playbook command.
 #
@@ -25,10 +25,6 @@ couchbase_server_ubuntu_ee_package: couchbase-server-enterprise_{{ couchbase_ser
 couchbase_server_ubuntu_ee_url: http://packages.couchbase.com/releases/{{ couchbase_server_ubuntu_ee_version }}/{{ couchbase_server_ubuntu_ee_package }}
 couchbase_server_ubuntu_ee_sha256: 65c0ee37f0e6d816257b32a36207ec9b8e81c84112beb657c851f9aacb9b4382
 
-#couchbase_server_ubuntu_ee_version: 6.5.0
-#couchbase_server_ubuntu_ee_package: couchbase-server-enterprise_{{ couchbase_server_ubuntu_ee_version }}-ubuntu18.04_amd64.deb
-#couchbase_server_ubuntu_ee_url: http://packages.couchbase.com/releases/{{ couchbase_server_ubuntu_ee_version }}/{{ couchbase_server_ubuntu_ee_package }}
-#couchbase_server_ubuntu_ee_sha256: 65c0ee37f0e6d816257b32a36207ec9b8e81c84112beb657c851f9aacb9b4382
 
 #couchbase_server_ubuntu_ee_version: 6.0.4
 #couchbase_server_ubuntu_ee_package: couchbase-server-enterprise_{{ couchbase_server_ubuntu_ee_version }}-ubuntu18.04_amd64.deb
@@ -55,8 +51,3 @@ couchbase_server_ubuntu_ce_version: 6.5.1
 couchbase_server_ubuntu_ce_package: couchbase-server-community_{{ couchbase_server_ubuntu_ce_version }}-ubuntu18.04_amd64.deb
 couchbase_server_ubuntu_ce_url: http://packages.couchbase.com/releases/{{ couchbase_server_ubuntu_ce_version }}/{{ couchbase_server_ubuntu_ce_package }}
 couchbase_server_ubuntu_ce_sha256: e275717da0c22efb846b397a1ffeaf63a21ec91e4e481efe3b59de0a0d530982
-
-#couchbase_server_ubuntu_ce_version: 6.5.0
-#couchbase_server_ubuntu_ce_package: couchbase-server-community_{{ couchbase_server_ubuntu_ce_version }}-ubuntu18.04_amd64.deb
-#couchbase_server_ubuntu_ce_url: http://packages.couchbase.com/releases/{{ couchbase_server_ubuntu_ce_version }}/{{ couchbase_server_ubuntu_ce_package }}
-#couchbase_server_ubuntu_ce_sha256: e275717da0c22efb846b397a1ffeaf63a21ec91e4e481efe3b59de0a0d530982

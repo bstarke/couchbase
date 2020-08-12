@@ -16,15 +16,15 @@
     local_action: file name=var/ssl_certs state=directory
 
   - name: Store SSL certificate
-    shell: "{{ couchbase_server_bin_path }}/couchbase-cli ssl-manage --cluster-cert-info -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} > /tmp/{{ couchbase_server_primary_node }}.pem"
+    shell: "{{ couchbase_server_bin_path }}/couchbase-cli ssl-manage --cluster-cert-info -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} > /tmp/{{ ansible_fqdn }}.pem"
 
   - name: Fetch SSL certificate
     fetch:
-      src:  /tmp/{{ couchbase_server_primary_node }}.pem
+      src:  /tmp/{{ ansible_fqdn }}.pem
       dest: ../{{ ansible_hostname }}.pem
       flat: true
 
   - name: Cleanup
     file:
-      path: /tmp/{{ couchbase_server_primary_node }}.pem
+      path: /tmp/{{ ansible_fqdn }}.pem
       state: absent

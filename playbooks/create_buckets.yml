@@ -7,11 +7,12 @@
     - ../roles/couchbase-server/vars/main.yml
   tasks:
     - name: Verify node health
-      shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} | awk '/{{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }}/ {print $3}'"
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} | awk '/{{ ansible_fqdn }}:{{ couchbase_server_admin_port }}/ {print $3}'"
       register: couchbase_server_health
       failed_when: couchbase_server_health['stdout'] != "healthy"
+      changed_when: False
 
     - name: Create new bucket
-      shell: "{{ couchbase_server_bin_path }}/couchbase-cli bucket-create -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --bucket {{ item }} --bucket-type {{ item.type }} --bucket-ramsize {{ item.ram }} --bucket-replica {{ item.replicas }} --bucket-eviction-policy {{ item.eviction }}"
-      loop: "{{  buckets  }}"
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli bucket-create -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --bucket {{ item.name }} --bucket-type {{ item.type }} --bucket-ramsize {{ item.ram }} --bucket-replica {{ item.replicas }} --bucket-eviction-policy {{ item.eviction }}"
+      loop: "{{ buckets }}"
       when: couchbase_server_health['stdout'] == "healthy"
