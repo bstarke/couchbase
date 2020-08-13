@@ -58,25 +58,15 @@
     mode: 0644
   notify: Source local settings
 
-# Ubuntu tasks
-- name: Ubuntu
-  import_tasks: Ubuntu.yml
-  when: ansible_distribution  == "Ubuntu"
-
-# CentOS tasks
-- name: CentOS
-  import_tasks: CentOS.yml
-  when: ansible_distribution  == "CentOS"
-
-# Debian tasks
+# Debian/Ubuntu tasks
 - name: Debian
   import_tasks: Debian.yml
-  when: ansible_distribution  == "Debian"
+  when: ansible_os_family  == "Debian"
 
-# Red Hat tasks
+# RedHat/Centos tasks
 - name: RedHat
   import_tasks: RedHat.yml
-  when: ansible_distribution  == "RedHat"
+  when: ansible_os_family  == "RedHat"
 
 - name: Couchbase Server Service
   service:
