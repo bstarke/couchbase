@@ -36,7 +36,7 @@
 #############################################################################
 
 couchbase_server_edition: "community"
-couchbase_server_admin: "Administrator"
+couchbase_server_admin: "admin"
 couchbase_server_password: "couchbase"
 couchbase_server_ram: 3072
 couchbase_server_admin_port: 8091

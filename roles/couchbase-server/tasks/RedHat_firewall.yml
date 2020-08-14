@@ -5,52 +5,47 @@
 ## Static firewall rules using iptables instead of firewalld
 
 - name: Stop firewalld
-  become: yes
-  become_user: root
+  become: true
   service: "name=firewalld state=stopped"
-  when: ansible_distribution_major_version >= 7 
+  when: ansible_distribution_major_version|int >= 7 
   tags: firewall
 
 - name: Install iptables rules
-  become: yes
-  become_user: root
+  become: true
   yum: "name=iptables-services state=present"
+  when: ansible_distribution == "Centos"
   tags: firewall
 
 - name: Mask firewalld
-  become: yes
-  become_user: root
+  become: true
   shell: "systemctl mask firewalld.service"
-  when: ansible_distribution_major_version >= 7 
+  when: ansible_distribution_major_version|int >= 7 
   tags: firewall
 
 - name: Enable iptables
-  become: yes
-  become_user: root
+  become: true
   shell: "systemctl enable iptables.service"
+  when: ansible_distribution == "Centos"
   tags: firewall
 
 - name: Stop services
-  become: yes
-  become_user: root
+  become: true
   service: "name=firewalld state=stopped"
-  when: ansible_distribution_major_version >= 7 
+  when: ansible_distribution_major_version|int >= 7 
   tags: firewall
 
 - name: Start services
-  become: yes
-  become_user: root
+  become: true
   service: "name=iptables state=started"
+  when: ansible_distribution == "Centos"
   tags: firewall
 
 - name: Install iptables rules
-  become: yes
-  become_user: root
+  become: true
   template: "src=etc_sysconfig_iptables.j2 dest=/etc/sysconfig/iptables.couchbase-server owner=couchbase group=couchbase"
   tags: firewall
 
 - name: Import iptables rules
-  become: yes
-  become_user: root
+  become: true
   shell: "/sbin/iptables-restore < /etc/sysconfig/iptables.couchbase-server"
   tags: firewall

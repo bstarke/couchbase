@@ -56,8 +56,10 @@
 
   - set_fact:
       couchbase_server_index_ram: "{{ ((((ansible_memtotal_mb|int * 0.2) |round(0,'floor')) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.2) |round(0,'floor') ) |int, 256) }}"
+      when: couchbase_server_index_ram == ""
   - set_fact:
-      couchbase_server_ram: "{{ ((((ansible_memtotal_mb|int * 0.8) |round(0,'floor') - couchbase_server_index_ram|float) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.8) |round(0,'floor') - couchbase_server_index_ram|float) |int, 256) }}"
+      couchbase_server_ram: "{{ ((((ansible_memtotal_mb|int * 0.75) |round(0,'floor') - couchbase_server_index_ram|float) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.75) |round(0,'floor') - couchbase_server_index_ram|float) |int, 256) }}"
+      when: couchbase_server_ram == ""
 
   - name: Check if already initialized #couchbase-cli host-list -c localhost:8091 --username Administrator --password couchbase
     shell: "{{ couchbase_server_bin_path }}/couchbase-cli host-list -c {{ ansible_fqdn }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"

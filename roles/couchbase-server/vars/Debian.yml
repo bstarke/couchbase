@@ -3,11 +3,11 @@
 #  This file contains variables used for installing Couchbase software
 #  Tested versions, using latest in version works as of 6.6.X (unless they change the cli options again)
 #
-#  couchbase-server 6.6.0-7909-1
-#  couchbase-server 6.5.1-6299-1
-#  couchbase-server 6.0.4-3082-1
+#  couchbase-server 6.6.0-7909
+#  couchbase-server 6.5.1-6299
+#  couchbase-server 6.0.4-3082
 #
-#  couchbase-server-community 6.5.1-6299-1
+#  couchbase-server-community 6.5.1-6299
 
-couchbase_server_debian_version: latest
-couchbase_server_debian_package: https://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-amd64.deb
+couchbase_server_debian_version: "latest"
+couchbase_server_debian_package: "https://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-amd64.deb"
