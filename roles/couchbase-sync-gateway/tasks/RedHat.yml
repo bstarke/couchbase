@@ -1,13 +1,18 @@
 ---
-
 - name: SELinux Python Module
-  yum: name=libselinux-python state=present
+  yum:
+    name: libselinux-python
+    state: present
   tags: installation
 
 - name: Install Nginx (RedHat)
-  yum: name=nginx
+  yum:
+    name: nginx
   tags: installation
 
-- name: Install Sync Gateway (RedHat)
-  yum: name=/tmp/{{ couchbase_sync_gateway_package }} state=present
+- name: Install Couchbase Sync Gateway (RedHat)
+  become: true
+  yum:
+    name: "{{ couchbase_sync_gateway_redhat_package }}"
+    state: present
   tags: installation

@@ -1,29 +1,16 @@
 ---
-
-- name: Download
-  get_url: url={{ couchbase_sync_gateway_url }} dest=/tmp/{{ couchbase_sync_gateway_package }} sha256sum={{ couchbase_sync_gateway_sha256 }} timeout=30
-  when: not couchbase_sync_gateway_local_package
-  tags:
-    - installation
-
-- name: Copy
-  copy: src={{ couchbase_sync_gateway_package}} dest=/tmp/{{ couchbase_sync_gateway_package }}
-  when: couchbase_sync_gateway_local_package
-  tags:
-    - installation
-
+- name: Distribution specific variables
+  include_vars: "../vars/{{ ansible_os_family }}.yml"
 # Install on CentOS/RHEL
-- include: RedHat.yml
-  when: ansible_os_family == "RedHat"
+# RedHat tasks
+- name: RedHat
+  import_tasks: RedHat.yml
+  when: ansible_os_family  == "RedHat"
 
-# Install on Debian/Ubuntu
-- include: Debian.yml
-  when: ansible_os_family == "Debian"
-
-- name: Cleanup
-  file: name=/tmp/{{ couchbase_sync_gateway_package }} state=absent
-  tags:
-    - installation
+# Debian/Ubuntu tasks
+- name: Debian
+  import_tasks: Debian.yml
+  when: ansible_os_family  == "Debian"
 
 - name: Ensure nginx sites-available path exists.
   file:

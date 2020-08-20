@@ -1,0 +1,4 @@
+- hosts: couchbase_gateway
+  become: true
+  roles:
+    - "../roles/couchbase-sync-gateway"

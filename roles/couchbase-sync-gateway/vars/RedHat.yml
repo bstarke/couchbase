@@ -1,0 +1,4 @@
+# Change couchbase_sync_gateway_redhat_edition to enterprise to download enterprise edition
+couchbase_sync_gateway_redhat_edition: "community"
+couchbase_sync_gateway_redhat_version: "2.7.0"
+couchbase_sync_gateway_debian_package: "http://packages.couchbase.com/releases/couchbase-sync-gateway/{{couchbase_sync_gateway_debian_version}}/couchbase-sync-gateway-{{couchbase_sync_gateway_debian_edition}}_{{couchbase_sync_gateway_debian_version}}_x86_64.rpm"
