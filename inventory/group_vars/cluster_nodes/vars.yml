@@ -1,0 +1,2 @@
+couchbase_server_index_ram: 256
+couchbase_server_ram: 384

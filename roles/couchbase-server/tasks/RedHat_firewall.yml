@@ -2,7 +2,7 @@
 # File: tasks/RedHat_firewall.yml - RedHat firewall tasks for 
 # ansible-couchbase-server
 
-## Static firewall rules using iptables instead of firewalld
+## Static firewall rules using firewalld
 
 - name: Stop firewalld
   become: true

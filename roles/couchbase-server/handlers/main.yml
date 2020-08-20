@@ -11,3 +11,8 @@
   service:
     name: couchbase-server
     state: restarted
+
+- name: Restart Firewalld
+  service:
+    name: firewalld
+    state: restarted
