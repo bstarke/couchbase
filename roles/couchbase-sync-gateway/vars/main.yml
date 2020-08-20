@@ -1,2 +1,22 @@
 ---
 # vars file for couchbase-sync-gateway
+couchbase_sync_gateway_port: 4984
+couchbase_sync_gateway_admin_port: 4985
+couchbase_sync_gateway_db_names:
+  - test-one
+  - test-two
+couchbase_sync_gateway_users:
+  - name: GUEST
+    admin_channels:
+      - public
+
+# NGINX
+couchbase_sync_gateway_nginx_server: localhost
+couchbase_sync_gateway_nginx_port: 80
+
+# Server
+# Server url is primary node's ip
+couchbase_server_url: http://192.168.33.10
+couchbase_server_admin_port: 8091
+couchbase_server_user: admin
+couchbase_server_pass: couchbase

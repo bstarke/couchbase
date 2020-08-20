@@ -1,9 +1,17 @@
 ---
-
 - name: Install Nginx (Debian)
-  apt: name=nginx
+  apt:
+    name: nginx
   tags: installation
 
-- name: Install Sync Gateway (Debian)
-  apt: deb=/tmp/{{ couchbase_sync_gateway_package }}
+- name: Install Couchbase Sync Gateway (Debian)
+  become: true
+  apt:
+    deb: "{{ couchbase_sync_gateway_debian_package }}"
+    state: present
   tags: installation
+
+#  # Firewall (optional)
+#  - name: Firewall limitations (Debian)
+#    include: Debian_firewall.yml
+#    when: couchbase_server_firewall == True

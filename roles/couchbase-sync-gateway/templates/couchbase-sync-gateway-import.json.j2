@@ -1,6 +1,6 @@
 {
-	"interface": "localhost:{{ couchbase_sync_gateway_port }}",
-	"adminInterface": "localhost:{{ couchbase_sync_gateway_admin_port }}",
+	"interface": "{{ hostvars[0] }}:{{ couchbase_sync_gateway_port }}",
+	"adminInterface": "{{ hostvars[1] }}:{{ couchbase_sync_gateway_admin_port }}",
     "logging": {
         "log_file_path": "/home/sync_gateway/logs",
         "console": {
