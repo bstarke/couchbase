@@ -1,13 +1,14 @@
 ---
-- name: SELinux Python Module
+- name: Install Python3
   yum:
-    name: libselinux-python
+    name: python3
     state: present
   tags: installation
 
 - name: Install Nginx (RedHat)
   yum:
     name: nginx
+    state: present
   tags: installation
 
 - name: Install Couchbase Sync Gateway (RedHat)
