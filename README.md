@@ -49,8 +49,6 @@ sudo killall -HUP mDNSResponder
 
 ### Tested on the following OS Distributions
 
-To monitor and manage the application
-
 - Sync Gateway
 
 |  OS Distributions  
