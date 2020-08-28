@@ -1,0 +1,7 @@
+buckets:
+- name: "brad"
+  roles: "ro_admin"
+  password: "#bR@d!"
+- name: "curtis"
+  roles: "ro_admin"
+  password: "AbCd3fG!"
