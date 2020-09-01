@@ -4,7 +4,7 @@
 - hosts: primary
   become: false
   vars_files:
-    - ../roles/couchbase-server/vars/main.yml
+    - ../roles/couchbase-server/defaults/main.yml
   tasks:
     - name: Verify node health
       shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} | awk '/:{{ couchbase_server_admin_port }}/ {print $3}'"

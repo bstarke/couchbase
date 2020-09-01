@@ -38,7 +38,6 @@
 couchbase_server_edition: "community"
 couchbase_server_admin: "admin"
 couchbase_server_password: "couchbase"
-couchbase_server_ram: 3072
 couchbase_server_admin_port: 8091
 couchbase_server_epmd_port: 4369
 couchbase_server_admin_ssl_port: 18091
