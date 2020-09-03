@@ -56,9 +56,9 @@
     wait_for: "port={{ couchbase_server_admin_port }} delay=2"
 
   - set_fact:
-      couchbase_server_index_default: "{{ ((((ansible_memtotal_mb|int * 0.5) |round(0,'floor')) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.5) |round(0,'floor') ) |int, 256) }}"
+      couchbase_server_index_default: "{{ ((((ansible_memtotal_mb|int * 0.45) |round(0,'floor')) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.45) |round(0,'floor') ) |int, 256) }}"
   - set_fact:
-      couchbase_server_ram_default: "{{ ((((ansible_memtotal_mb|int * 0.5) |round(0,'floor') - couchbase_server_index_default|float) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.5) |round(0,'floor') - couchbase_server_index_default|float) |int, 256) }}"
+      couchbase_server_ram_default: "{{ ((((ansible_memtotal_mb|int * 0.45) |round(0,'floor') - couchbase_server_index_default|float) |int) >= 256 ) | ternary (((ansible_memtotal_mb|int * 0.45) |round(0,'floor') - couchbase_server_index_default|float) |int, 256) }}"
   - set_fact:
       couchbase_server_index_ram: "{{ couchbase_server_index_ram | default(couchbase_server_index_default) }}"
       couchbase_server_ram: "{{ couchbase_server_ram | default(couchbase_server_ram_default) }}"
