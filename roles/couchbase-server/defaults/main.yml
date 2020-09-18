@@ -26,7 +26,6 @@
 # couchbase_server_mount_options: Additional mount options
 # couchbase_server_data_path: Path to data files
 # couchbase_server_index_path: Path to index files
-# couchbase_server_log_path: Path to log files
 # couchbase_server_cbbackup_path: Path to store output of cbbackup
 # couchbase_server_cbcollect_path: Path to cbcollect_info output
 # couchbase_server_tmpdir: System wide TMPDIR for cbcollect_info
@@ -56,7 +55,6 @@ couchbase_server_partition: "/dev-west/mapper/VolGroup-lv_root"
 couchbase_server_mount_options: "noatime,barrier=0,errors=remount-ro"
 couchbase_server_data_path: "{{ couchbase_server_home_path }}/var/lib/couchbase/data"
 couchbase_server_index_path: "{{ couchbase_server_home_path }}/var/lib/couchbase/data"
-couchbase_server_log_path: "{{ couchbase_server_home_path }}/var/lib/couchbase/logs"
 couchbase_server_cbbackup_path: "/opt/couchbase_backups"
 couchbase_server_cbcollect_path: "/tmp"
 couchbase_server_tmpdir: "/tmp"

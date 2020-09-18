@@ -7,5 +7,8 @@
 - name: Create Buckets
   import_playbook: create_buckets.yml
 
-- name: Sync Gateway
-  import_playbook: sync_gateway_init.yml
+- name: Create Users
+  import_playbook: create_users.yml
+
+#- name: Sync Gateway
+#  import_playbook: sync_gateway_init.yml

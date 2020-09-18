@@ -1,0 +1,26 @@
+---
+# File: create_buckets.yml
+# Example Ansible playbook to create a new Couchbase Server bucket
+- hosts: primary
+  become: false
+  tasks:
+  - name: Check if rebalance is needed
+    uri:
+      url: "http://{{ ansible_fqdn }}:{{ couchbase_server_admin_port }}/pools/default"
+      user: "{{ couchbase_server_admin }}"
+      password: "{{ couchbase_server_password }}"
+      method: GET
+      force_basic_auth: yes
+      return_content: yes
+      status_code: 200
+      body_format: json
+    register: result
+    changed_when: false
+
+  - name: Display the variable
+    debug:
+      msg: "Balanced: {{ result.json.balanced }}"
+
+  - name: Rebalance when result.json.balanced == false
+    shell: "couchbase-cli rebalance --cluster {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} --username {{ couchbase_server_admin }} --password {{ couchbase_server_password }} --no-progress-bar --no-wait"
+    when: "result.json.balanced == False"

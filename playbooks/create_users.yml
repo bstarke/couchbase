@@ -3,8 +3,6 @@
 # Example Ansible playbook to create a new Couchbase Server bucket
 - hosts: primary
   become: false
-  vars_files:
-    - ../roles/couchbase-server/vars/main.yml
   tasks:
     - name: Verify node health
       shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} | awk '/:{{ couchbase_server_admin_port }}/ {print $3}'"
@@ -12,6 +10,10 @@
       failed_when: couchbase_server_health['stdout_lines'][0] != "healthy"
       changed_when: False
 
-    - name: Create new bucket
-      shell: "{{ couchbase_server_bin_path }}/couchbase-cli bucket-create -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --bucket {{ item.name }} --bucket-type {{ item.type }} --bucket-ramsize {{ item.ram }} --bucket-replica {{ item.replicas }} --bucket-eviction-policy {{ item.eviction }}"
-      loop: "{{ buckets }}"
+    - name: Create users
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli user-manage -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --set --rbac-username {{item.username}} --rbac-password {{item.password}} --roles {{ item.roles}} --auth-domain local"
+      loop: "{{ users }}"
+
+couchbase-cli user-manage -c 127.0.0.1:8091 -u admin -p W@lm@rt1 --set --rbac-username jdoe --rbac-password cbpass --rbac-name "John Doe" --roles bucket_admin[*],ro_admin --auth-domain local
+
+curl -v -X PUT http://localhost:8091/settings/rbac/users/local/jdoe -u admin:W@lm@rt1 -d password=cbpass -d roles=bucket_admin[cloud],bucket_admin[store]

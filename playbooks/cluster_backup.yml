@@ -4,13 +4,12 @@
 # Couchbase Server cluster with cbbackup and save as a tarball in
 # $PWD/var/couchbase_backups/
 - hosts: primary
-  gather_facts: False
   become: true
 
   tasks:
   - name: Ensure backup target exists
     file:
-      path: {{ couchbase_server_cbbackup_path }}
+      path: "{{ couchbase_server_cbbackup_path }}"
       state: directory
 
   - name: Execute cbbackup
@@ -21,18 +20,18 @@
 
   - name: Retrieve backup archive
     fetch:
-      src: {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz
-      dest: ../couchbase_backups/{{ ansible_hostname }}.tgz
+      src: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
+      dest: "../couchbase_backups/{{ ansible_hostname }}.tgz"
       flat: yes
       fail_on_missing: yes
       validate_checksum: yes
 
   - name: Cleanup Dir
     file:
-      path: {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}
+      path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
       state: absent
 
   - name: Cleanup TGZ
     file:
-      path: {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz
+      path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
       state: absent
