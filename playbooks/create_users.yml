@@ -13,7 +13,3 @@
     - name: Create users
       shell: "{{ couchbase_server_bin_path }}/couchbase-cli user-manage -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} --set --rbac-username {{item.username}} --rbac-password {{item.password}} --roles {{ item.roles}} --auth-domain local"
       loop: "{{ users }}"
-
-couchbase-cli user-manage -c 127.0.0.1:8091 -u admin -p W@lm@rt1 --set --rbac-username jdoe --rbac-password cbpass --rbac-name "John Doe" --roles bucket_admin[*],ro_admin --auth-domain local
-
-curl -v -X PUT http://localhost:8091/settings/rbac/users/local/jdoe -u admin:W@lm@rt1 -d password=cbpass -d roles=bucket_admin[cloud],bucket_admin[store]

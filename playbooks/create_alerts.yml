@@ -1,0 +1,34 @@
+---
+# File: create_alerts.yml
+# Example Ansible playbook to setup email alerts
+- hosts: primary
+  become: false
+  tasks:
+    - name: Verify node health
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli server-list -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} | awk '/:{{ couchbase_server_admin_port }}/ {print $3}'"
+      register: couchbase_server_health
+      failed_when: couchbase_server_health['stdout_lines'][0] != "healthy"
+      changed_when: False
+
+    - name: Create Email Alerts
+      shell: "{{ couchbase_server_bin_path }}/couchbase-cli setting-alert -c {{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}
+        --enable-email-alert {{ couchbase_server_alerts_email_enabled }}
+        --email-host {{ couchbase_server_alerts_email_host }}
+        --email-port {{ couchbase_server_alerts_email_port }}
+        --enable-email-encrypt {{ couchbase_server_alerts_email_tls_encryption }}
+        --email-sender {{ couchbase_server_alerts_email_sender }}
+        --email-recipients {{ couchbase_server_alerts_email_recipient }}
+        --alert-auto-failover-node
+        --alert-auto-failover-max-reached
+        --alert-auto-failover-node-down
+        --alert-auto-failover-cluster-small
+        --alert-auto-failover-disable
+        --alert-ip-changed
+        --alert-disk-space
+        --alert-meta-overhead
+        --alert-meta-oom
+        --alert-write-failed
+        --alert-audit-msg-dropped
+        --alert-indexer-max-ram
+        --alert-timestamp-drift-exceeded
+        --alert-communication-issue"

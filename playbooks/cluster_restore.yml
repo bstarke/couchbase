@@ -1,0 +1,30 @@
+---
+# File: cluster_restore.yml
+# Ansible playbook to restore full cluster backup from the following directory
+# $PWD/var/couchbase_backups/
+- hosts: primary
+  become: true
+
+  tasks:
+    - name: Ensure backup target exists
+      file:
+        path: "{{ couchbase_server_cbbackup_path }}"
+        state: directory
+
+    - name: Copy Backup to Server and Decompress
+      unarchive:
+        src: "../couchbase_backups/{{ ansible_hostname }}.tgz"
+        dest: "{{ couchbase_server_cbbackup_path }}"
+
+    - name: Restore the Data to the Cluster
+      shell: "{{ couchbase_server_bin_path }}/cbrestore {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }} http://{{ ansible_fqdn }}:{{ couchbase_server_admin_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }} -b {{ item.name }}"
+      loop: "{{ buckets }}"
+
+    - name: Cleanup Backup Directory
+      file:
+        path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
+        state: absent
+
+    - name: Building the Deferred Indexes
+      shell: "{{ couchbase_server_bin_path }}/cbq -s=\"BUILD INDEX ON {{ item.name }} (( SELECT RAW name FROM system:indexes WHERE keyspace_id = '{{ item.name }}' AND state = 'deferred' ))\" -e {{ ansible_fqdn }}:{{ couchbase_server_query_port }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+      loop: "{{ buckets }}"

@@ -7,31 +7,33 @@
   become: true
 
   tasks:
-  - name: Ensure backup target exists
-    file:
-      path: "{{ couchbase_server_cbbackup_path }}"
-      state: directory
+    - name: Ensure backup target exists
+      file:
+        path: "{{ couchbase_server_cbbackup_path }}"
+        state: directory
 
-  - name: Execute cbbackup
-    shell: "{{ couchbase_server_bin_path }}/cbbackup http://{{ ansible_fqdn }}:{{ couchbase_server_admin_port }} {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
+    - name: Execute cbbackup
+      shell: "{{ couchbase_server_bin_path }}/cbbackup http://{{ ansible_fqdn }}:{{ couchbase_server_admin_port }} {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }} -u {{ couchbase_server_admin }} -p {{ couchbase_server_password }}"
 
-  - name: Create backup archive
-    shell: "tar zcf {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz {{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
+    - name: Create backup archive
+      archive:
+        path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
+        dest: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
 
-  - name: Retrieve backup archive
-    fetch:
-      src: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
-      dest: "../couchbase_backups/{{ ansible_hostname }}.tgz"
-      flat: yes
-      fail_on_missing: yes
-      validate_checksum: yes
+    - name: Retrieve backup archive
+      fetch:
+        src: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
+        dest: "../couchbase_backups/{{ ansible_hostname }}.tgz"
+        flat: yes
+        fail_on_missing: yes
+        validate_checksum: yes
 
-  - name: Cleanup Dir
-    file:
-      path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
-      state: absent
+    - name: Cleanup Dir
+      file:
+        path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}"
+        state: absent
 
-  - name: Cleanup TGZ
-    file:
-      path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
-      state: absent
+    - name: Cleanup TGZ
+      file:
+        path: "{{ couchbase_server_cbbackup_path }}/{{ ansible_hostname }}.tgz"
+        state: absent

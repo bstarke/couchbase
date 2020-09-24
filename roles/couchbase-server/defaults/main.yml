@@ -61,3 +61,13 @@ couchbase_server_tmpdir: "/tmp"
 couchbase_server_tune_os: false
 couchbase_server_firewall: false
 couchbase_server_local_package: false
+# Email Alerts Variables, Copy these to Inventory vars to get the Email Alerts Playbook to work
+couchbase_server_alerts_email_enabled: 0
+couchbase_server_alerts_email_host: ""
+couchbase_server_alerts_email_port: 25
+couchbase_server_alerts_email_tls_encryption: 0
+couchbase_server_alerts_email_sender : ""
+couchbase_server_alerts_email_recipient: ""
+couchbase_server_alerts_email_user: ""
+couchbase_server_alerts_email_password: ""
+couchbase_server_query_port: 8093

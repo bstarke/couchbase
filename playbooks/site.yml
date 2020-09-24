@@ -10,5 +10,8 @@
 - name: Create Users
   import_playbook: create_users.yml
 
+- name: Setup Email Alerts
+  import_playbook: create_alerts.yml
+
 #- name: Sync Gateway
 #  import_playbook: sync_gateway_init.yml
